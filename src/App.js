@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import ServiceList from './components/ServiceList';
+import AddServiceForm from './components/AddServiceForm';
 
-function App() {
+const App = () => {
+  const [services, setServices] = useState([]);
+  const [currentService, setCurrentService] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const addService = (service) => {
+    setServices([...services, service]);
+  };
+
+  const updateService = (updatedService) => {
+    const updatedServices = services.map((service, index) =>
+      index === currentService.index ? updatedService : service
+    );
+    setServices(updatedServices);
+    setIsEditing(false);
+    setCurrentService(null);
+  };
+
+  const handleEdit = (index) => {
+    setIsEditing(true);
+    setCurrentService({ ...services[index], index });
+  };
+
+  const handleDelete = (index) => {
+    const updatedServices = services.filter((_, i) => i !== index);
+    setServices(updatedServices);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Healthcare Services Manager</h1>
+      <AddServiceForm
+        addService={addService}
+        updateService={updateService}
+        currentService={currentService}
+        isEditing={isEditing}
+      />
+      <ServiceList
+        services={services}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+      />
     </div>
   );
-}
+};
 
 export default App;
